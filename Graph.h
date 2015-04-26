@@ -9,7 +9,10 @@
 #include <limits.h>
 #include <cstddef>
 #include <math.h>
+#include <sstream>
 #include "symbolics.h"
+#include "graphviewer.h"
+#include "edgetype.h"
 
 using namespace std;
 
@@ -18,14 +21,14 @@ const int INT_INFINITY = INT_MAX;
 enum Preference {
     PRICE,
     DISTANCE,
-    TIME,
-    SWAP
+    TIME
 };
 
 enum Transport {
+    WALK,
     METRO,
-    BUS,
-    WALK
+    BUS
+
 };
 
 template<class T>
@@ -158,7 +161,9 @@ public:
 
     int getNumVertex() const;
 
-    void aStarShortestPath(const Vertex<T> &source, const Vertex<T> &dest, Preference preferencia);
+    void aStarShortestPath(Vertex<T> &source, Vertex<T> &dest, Preference preferencia);
+
+    void paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv);
 };
 
 template<class T>
@@ -257,8 +262,8 @@ struct vertex_greater_than {
 };
 
 template <class T>
-void Graph<T>::aStarShortestPath(const Vertex<T> &source, const Vertex<T> &dest, Preference preferencia) {
-    for(unsigned int i = 0; i < vertexSet.size(); i++) {
+void Graph<T>::aStarShortestPath(Vertex<T> &source, Vertex<T> &dest, Preference preferencia) {
+    for (unsigned int i = 0; i < vertexSet.size(); i++) {
         vertexSet[i]->path = NULL;
         vertexSet[i]->cost = INT_INFINITY;
         vertexSet[i]->processing = false;
@@ -273,71 +278,100 @@ void Graph<T>::aStarShortestPath(const Vertex<T> &source, const Vertex<T> &dest,
     yGeoDest = (((dest.y - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
     yGeoDest *= LATITUDE_UNIT;
 
-    Vertex<T>* v = &source;
+
+    Vertex<T> *v = &source;
     v->cost = 0;
 
-    vector< Vertex<T>* > pq;
+    vector<Vertex<T> *> pq;
     pq.push_back(v);
 
     make_heap(pq.begin(), pq.end());
 
-    while( !pq.empty() ) {
+    while (!pq.empty()) {
 
         v = pq.front();
         pop_heap(pq.begin(), pq.end());
         pq.pop_back();
 
-        if(v->getInfo() == dest)
-            break;
-
         xGeoSource = (((v->x - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
         xGeoSource *= LONGITUDE_UNIT;
         yGeoSource = (((v->y - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
         yGeoSource *= LATITUDE_UNIT;
+        Vertex<T> *w;
 
-        for(unsigned int i = 0; i < v->adj.size(); i++) {
-            Vertex<T>* w = v->adj[i]->dest;
+        for (unsigned int i = 0; i < v->adj.size(); i++) {
+            w = v->adj[i]->dest;
 
             distanceToDest = sqrt(pow(xGeoDest - xGeoSource, 2) + pow(yGeoDest - yGeoSource, 2));
 
-            if(preferencia == PRICE) {
+            if (preferencia == PRICE) {
                 costEdge = distanceToDest * v->adj[i]->price;
-            } else if(preferencia == DISTANCE) {
+            } else if (preferencia == DISTANCE) {
                 costEdge = distanceToDest * v->adj[i]->distance;
-            } else if(preferencia == TIME) {
-                if(v->adj[i]->transport == METRO) {
-                    costEdge = distanceToDest * v->adj[i]->distance / 25;
-                } else if(v->adj[i]->transport == BUS) {
-                    costEdge = distanceToDest * v->adj[i]->distance / 15;
+            } else if (preferencia == TIME) {
+                if (v->adj[i]->transport == METRO) {
+                    costEdge = distanceToDest * v->adj[i]->distance / 50;
+                } else if (v->adj[i]->transport == BUS) {
+                    costEdge = distanceToDest * v->adj[i]->distance / 20;
                 } else {
                     costEdge = distanceToDest * v->adj[i]->distance / 5;
                 }
-            } else if(preferencia == SWAP) {
-                if(v->adj[i]->transport != lastTransport)
-                    costEdge = distanceToDest * 1;
-                else
-                    costEdge = 0;
             }
 
-            if(v->cost + costEdge < w->cost ) {
+            if (v->cost + costEdge < w->cost) {
                 w->cost = v->cost + costEdge;
                 w->path = v;
 
                 //se ja estiver na lista, apenas a actualiza
-                if(!w->processing)
-                {
+                if (!w->processing) {
                     w->processing = true;
+                    lastTransport = v->adj[i]->transport;
                     pq.push_back(w);
                 }
 
-                lastTransport = v->adj[i]->transport;
-
-                make_heap (pq.begin(),pq.end(),vertex_greater_than<T>());
+                make_heap(pq.begin(), pq.end(), vertex_greater_than<T>());
             }
         }
     }
+
 }
 
+template<class T>
+void Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv) {
+    if (dest.path == NULL)
+        return;
+
+    int id = 0;
+
+    stringstream instructions;
+    gv->setVertexColor(source.getInfo()->getId(),"red");
+    gv->setVertexColor(dest.getInfo()->getId(),"blue");
+
+    gv->addEdge(99999,dest.path->getInfo()->getId(),dest.getInfo()->getId(),EdgeType::DIRECTED);
+    gv->setEdgeColor(99999,"red");
+
+
+
+    Vertex<T> currentPath = *dest.path;
+    if (source.getInfo() == dest.path->getInfo())
+        cout << "É direto!! " << endl;
+
+    while (source.getInfo() != currentPath.getInfo()) {
+        for(unsigned int i = 0; i < currentPath.path->getAdj().size(); i++) {
+            if (currentPath.path->getAdj()[i]->getDest()->getInfo() == currentPath.getInfo()){
+                instructions << currentPath.path->getAdj()[i]->getTransport() << "\n";
+            }
+        }
+
+        gv->addEdge(100000+(id++),currentPath.path->getInfo()->getId(),currentPath.getInfo()->getId(),EdgeType::DIRECTED);
+        gv->setEdgeColor(100000+id-1,"red");
+        gv->setVertexColor(currentPath.getInfo()->getId(),"green");
+        currentPath = *currentPath.path;
+
+    }
+
+    cout << instructions.str() << endl;
+}
 
 
 #endif /* GRAPH_H_ */

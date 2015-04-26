@@ -159,6 +159,8 @@ vector<string> extraiLinha(string fichLinhaAtual) {
 void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
     int lastBusLocal;
     int index;
+    double xGeoSource, yGeoSource, xGeoDest, yGeoDest, distance;
+
     for(int linha = 0; linha < locais.size();linha++){
 
         if(locais[linha].size() == 0)
@@ -180,17 +182,28 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
          * entre os vertices. */
         for(int local = 1; local < locais[linha].size();local++){
             index = paragemExiste(g, locais[linha][local]);
+
+
+
             /* O mesmo raciocinio que a primeira paragem */
             if(index == -1) {
                 locais[linha][local]->setId(g.getNumVertex());
                 g.addVertex(locais[linha][local], locais[linha][local]->getX(), locais[linha][local]->getY());
 
-                g.addEdge(g.getVertexSet().at(lastBusLocal)->getInfo(),g.getVertexSet().at(g.getNumVertex()-1)->getInfo(),1, 1, BUS);
-                lastBusLocal = g.getNumVertex()-1;
+                xGeoSource = (((g.getVertexSet().at(lastBusLocal)->getInfo()->getX() - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+                xGeoSource *= LONGITUDE_UNIT;
+                yGeoSource = (((g.getVertexSet().at(lastBusLocal)->getInfo()->getY() - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+                yGeoSource *= LATITUDE_UNIT;
 
-                if(locais[linha][local]->getId() == 1224){
-                    cout << "cenas";
-                }
+                xGeoDest = (((g.getVertexSet().at(g.getNumVertex()-1)->getInfo()->getX() - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+                xGeoDest *= LONGITUDE_UNIT;
+                yGeoDest = (((g.getVertexSet().at(g.getNumVertex()-1)->getInfo()->getY() - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+                yGeoDest *= LATITUDE_UNIT;
+
+                distance = sqrt(pow(xGeoDest - xGeoSource, 2) + pow(yGeoDest - yGeoSource, 2));
+
+                g.addEdge(g.getVertexSet().at(lastBusLocal)->getInfo(),g.getVertexSet().at(g.getNumVertex()-1)->getInfo(),1, distance, BUS);
+                lastBusLocal = g.getNumVertex()-1;
             }
             else {
                 bool alreadyHaveEdge = false;
@@ -201,13 +214,21 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
                     }
                 }
 
-                if(index == 1224){
-                    cout << "cenas";
-                }
+                if(!alreadyHaveEdge){
+                    xGeoSource = (((g.getVertexSet().at(lastBusLocal)->getInfo()->getX() - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+                    xGeoSource *= LONGITUDE_UNIT;
+                    yGeoSource = (((g.getVertexSet().at(lastBusLocal)->getInfo()->getY() - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+                    yGeoSource *= LATITUDE_UNIT;
 
-                if(!alreadyHaveEdge)
-                    g.addEdge(g.getVertexSet().at(lastBusLocal)->getInfo(),g.getVertexSet().at(index)->getInfo(), 1, 1, BUS);
+                    xGeoDest = (((g.getVertexSet().at(index)->getInfo()->getX() - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+                    xGeoDest *= LONGITUDE_UNIT;
+                    yGeoDest = (((g.getVertexSet().at(index)->getInfo()->getY() - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+                    yGeoDest *= LATITUDE_UNIT;
+
+                    distance = sqrt(pow(xGeoDest - xGeoSource, 2) + pow(yGeoDest - yGeoSource, 2));
+                    g.addEdge(g.getVertexSet().at(lastBusLocal)->getInfo(),g.getVertexSet().at(index)->getInfo(), distance * BUSPRICEPERMETER, distance, BUS);
                 lastBusLocal = index;
+                }
             }
         }
     }

@@ -18,7 +18,8 @@
 #define MAX_DISTANCE 417 // Max walkable distance in meters (equivalent to 5 minutes of walking)
 #define LATITUDE_UNIT 110574.28
 #define LONGITUDE_UNIT 111302.62
-#define DELTAX
-#define DELTAY
+#define BUSPRICEPERMETER 0.0012
+#define SUBWAYPRICEPERMETER 0.001
+#define FOOTPRICEPERMETER 0
 
 long double stringToDouble(std::string d);

@@ -107,7 +107,8 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
     int index = -1;
     int previousIndex = -1;
     char letraLinhaMetro = 'A';
-    int teste;
+    double xGeoSource, yGeoSource, xGeoDest, yGeoDest, distance;
+
 
     i_ficheiro.open((linhaMetro + letraLinhaMetro).c_str());
 
@@ -154,8 +155,20 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
             }
 
             cout << previousIndex << " " << index << endl;
-            if(!alreadyHaveEdge)
-                g.addEdge(g.getVertexSet().at(previousIndex)->getInfo(),g.getVertexSet().at(index)->getInfo(), 1, 1, METRO);
+            if(!alreadyHaveEdge){
+                xGeoSource = (((g.getVertexSet().at(previousIndex)->getInfo()->getX() - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+                xGeoSource *= LONGITUDE_UNIT;
+                yGeoSource = (((g.getVertexSet().at(previousIndex)->getInfo()->getY() - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+                yGeoSource *= LATITUDE_UNIT;
+
+                xGeoDest = (((g.getVertexSet().at(index)->getInfo()->getX() - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+                xGeoDest *= LONGITUDE_UNIT;
+                yGeoDest = (((g.getVertexSet().at(index)->getInfo()->getY() - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+                yGeoDest *= LATITUDE_UNIT;
+
+                distance = sqrt(pow(xGeoDest - xGeoSource, 2) + pow(yGeoDest - yGeoSource, 2));
+                g.addEdge(g.getVertexSet().at(previousIndex)->getInfo(),g.getVertexSet().at(index)->getInfo(), distance * SUBWAYPRICEPERMETER, distance, METRO);
+            }
             previousIndex = index;
         }
 

@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QString>
 
-Graph<Local*> g;
+extern Graph<Local*> g;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -50,4 +50,9 @@ void MainWindow::on_updateLocals_clicked()
     UpdateLines updatelines(this);
     updatelines.setModal(false);
     updatelines.exec();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    showFullMap();
 }

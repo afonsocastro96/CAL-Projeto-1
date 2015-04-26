@@ -24,6 +24,8 @@ private slots:
 
     void on_updateLocals_clicked();
 
+    void on_pushButton_2_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

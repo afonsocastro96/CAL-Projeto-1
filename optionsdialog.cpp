@@ -2,6 +2,8 @@
 #include "ui_optionsdialog.h"
 #include "init.h"
 
+#include <string>
+
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OptionsDialog)
@@ -21,4 +23,30 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 OptionsDialog::~OptionsDialog()
 {
     delete ui;
+}
+
+void OptionsDialog::on_buttonBox_accepted()
+{
+    string res = ui->comboBox->currentText().toStdString();
+    string resXstr;
+    string resYstr;
+
+    int index = 0;
+
+    while(isdigit(res[index])){
+        resXstr.push_back(res[index]);
+        index++;
+    }
+
+    index++;
+
+    while(isdigit(res[index])){
+        resYstr.push_back(res[index]);
+        index++;
+    }
+
+    resX = stoi(resXstr);
+    resY = stoi(resYstr);
+
+    cout << resX << " " << resY;
 }

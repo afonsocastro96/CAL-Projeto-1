@@ -95,7 +95,7 @@ void calculateWalkableEdges(Graph<Local*> &graph) {
             if(edgeWithSameSource)
                 continue;
 
-            graph.addEdge(sourceLocal->getInfo(), destLocal->getInfo(), 0, distance, WALK);
+            graph.addEdge(sourceLocal->getInfo(), destLocal->getInfo(), distance * FOOTPRICEPERMETER, distance, WALK);
         }
     }
 }
