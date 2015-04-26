@@ -4,7 +4,7 @@ using namespace std;
 
 void callUpdateBusScript(){
 #ifdef __linux__
-    string command = "sh /home/afonso/Documentos/CAL/Projeto - Itinerarios Multimodais/ProjetoItinerariosMultiModais/linhas/autocarro/download.sh";
+    string command = "sh linhas/autocarro/download.sh";
     system(command.c_str());
 #else
     cout << "Windows sucks, Linux for the win.\n";
@@ -29,7 +29,7 @@ void loadNodes(Graph<Local*> &g){
     int x;
     int y;
 
-    ifstream ifile("/home/afonso/Documentos/CAL/ProjetoCAL/nodes.txt");
+    ifstream ifile("nodes.txt");
 
     while(!ifile.eof()){
         getline(ifile, idStr);
@@ -59,7 +59,7 @@ void loadEdges(Graph<Local*> &g){
     Transport tipoTransporte;
     int transport;
 
-    ifstream ifile("/home/afonso/Documentos/CAL/ProjetoCAL/edges.txt");
+    ifstream ifile("edges.txt");
 
     while(!ifile.eof()){
         ifile >> partida;
@@ -107,8 +107,8 @@ void createFiles(){
 void init(Graph<Local*> &g){
 
     /* Abrir os ficheiros */
-    ifstream i_nodes("/home/afonso/Documentos/CAL/ProjetoCAL/nodes.txt");
-    ifstream i_edges("/home/afonso/Documentos/CAL/ProjetoCAL/edges.txt");
+    ifstream i_nodes("nodes.txt");
+    ifstream i_edges("edges.txt");
 
     if(!(i_nodes && i_edges))
         createFiles();
