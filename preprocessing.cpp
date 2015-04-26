@@ -20,7 +20,7 @@ using namespace std;
 
 void saveNodes(Graph<Local*> &graph) {
     ofstream o;
-    o.open("/home/afonso/Documentos/CAL/ProjetoCAL/nodes.txt");
+    o.open("nodes.txt");
 
     vector<Vertex<Local*> *> vertices = graph.getVertexSet();
     Vertex<Local*> * local;
@@ -32,7 +32,7 @@ void saveNodes(Graph<Local*> &graph) {
 
 void saveEdges(Graph<Local*> &graph) {
     ofstream o;
-    o.open("/home/afonso/Documentos/CAL/ProjetoCAL/edges.txt");
+    o.open("edges.txt");
 
     vector<Vertex<Local*> *> vertices = graph.getVertexSet();
     Vertex<Local*> * local;

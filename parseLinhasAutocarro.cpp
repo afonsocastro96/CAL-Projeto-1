@@ -172,7 +172,7 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
         /* Primeiro local nao existe, adicionar ao grafo e atualizar o valor da ultima paragem de autocarro */
         if(lastBusLocal == -1) {
             locais[linha][0]->setId(g.getNumVertex());
-            g.addVertex(locais[linha][0]);
+            g.addVertex(locais[linha][0], locais[linha][0]->getX(), locais[linha][0]->getY());
             lastBusLocal = g.getNumVertex() - 1;
         }
 
@@ -183,7 +183,7 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
             /* O mesmo raciocinio que a primeira paragem */
             if(index == -1) {
                 locais[linha][local]->setId(g.getNumVertex());
-                g.addVertex(locais[linha][local]);
+                g.addVertex(locais[linha][local], locais[linha][local]->getX(), locais[linha][local]->getY());
 
                 g.addEdge(g.getVertexSet().at(lastBusLocal)->getInfo(),g.getVertexSet().at(g.getNumVertex()-1)->getInfo(),1, 1, BUS);
                 lastBusLocal = g.getNumVertex()-1;

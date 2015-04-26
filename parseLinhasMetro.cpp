@@ -120,7 +120,7 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
          * as arestas entre as paragens. */
         for(int paragem = 0; paragem < locais.size(); paragem++){
             if(paragemMetro == locais[paragem]->getNome()){
-                previousIndex = g.addVertex(locais[paragem]);
+                previousIndex = g.addVertex(locais[paragem], locais[paragem]->getX(), locais[paragem]->getY());
                 if(previousIndex == g.getNumVertex() - 1)
                     locais[paragem]->setId(g.getNumVertex()-1);
                 cout << "Local: " << locais[paragem]->getNome() << endl;
@@ -134,7 +134,7 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
             getline(i_ficheiro,paragemMetro);
             for(int paragem = 0; paragem < locais.size(); paragem++){
                 if(paragemMetro == locais[paragem]->getNome()){
-                    index = g.addVertex(locais[paragem]);
+                    index = g.addVertex(locais[paragem], locais[paragem]->getX(), locais[paragem]->getY());
                     if(index != -1) {
                         cout << "Local v2: " << g.getVertexSet().at(index)->getInfo()->getNome() << endl;
                         if(index == g.getNumVertex() - 1)

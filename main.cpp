@@ -1,24 +1,16 @@
-#include "init.h"
+#include <string>
+#include <iostream>
+#include <fstream>
+
+#include "Graph.h"
+#include "Local.h"
+#include "parseLinhasMetro.h"
+#include "parseLinhasAutocarro.h"
+#include "preprocessing.h"
+#include "graphviewer.h"
+#include "symbolics.h"
 
 using namespace std;
-
-void callUpdateBusScript(){
-#ifdef __linux__
-    string command = "sh linhas/autocarro/download.sh";
-    system(command.c_str());
-#else
-    cout << "Windows sucks, Linux for the win.\n";
-#endif
-}
-
-void callUpdateSubwayScript(){
-#ifdef __linux__
-    string command = "sh /home/afonso/Documentos/CAL/Projeto - Itinerarios Multimodais/ProjetoItinerariosMultiModais/linhas/metro/download.sh";
-    system(command.c_str());
-#else
-    cout << "Windows sucks, Linux for the win.\n";
-#endif
-}
 
 void loadNodes(Graph<Local*> &g){
     string idStr;
@@ -45,7 +37,7 @@ void loadNodes(Graph<Local*> &g){
 
         ifile.get(); //Limpar a linha separadoera do ficheiro
         Local* l = new Local(id, x,y,nome);
-        g.addVertex(l);
+        g.addVertex(l, l->getX(), l->getY());
     }
 
     ifile.close();
@@ -87,6 +79,7 @@ void loadFiles(Graph<Local*> &g) {
 }
 
 void createFiles(){
+    Graph<Local*> g;
 
     //Parse Info from downloaded files
     vector<vector<Local *> > p = obterLinhasAutocarro(vector<string>(lines));
@@ -104,9 +97,12 @@ void createFiles(){
     return;
 }
 
-void init(Graph<Local*> &g){
+int main() {
+    Graph<Local*> g;
+    int edgeID = 0;
 
     /* Abrir os ficheiros */
+
     ifstream i_nodes("nodes.txt");
     ifstream i_edges("edges.txt");
 
@@ -114,22 +110,18 @@ void init(Graph<Local*> &g){
         createFiles();
 
     loadFiles(g);
-}
-
-int exec(Graph<Local*> &g){
-    int edgeID = 0;
 
     /* Criar os locais */
     GraphViewer* gv = new GraphViewer(HSIZE, VSIZE, false);
     gv->setBackground("/home/afonso/Imagens/DiHnkJ2.jpg");
     gv->createWindow(1288, 766);
 
-    for(unsigned int local = 0; local < g.getVertexSet().size(); local++){
+    for(int local = 0; local < g.getVertexSet().size(); local++){
         gv->addNode(g.getVertexSet().at(local)->getInfo()->getId(),g.getVertexSet().at(local)->getInfo()->getX(),g.getVertexSet().at(local)->getInfo()->getY());
     }
 
-    for(unsigned int local = 0; local < g.getVertexSet().size(); local++){
-        for(unsigned int ligacao = 0; ligacao < g.getVertexSet().at(local)->getAdj().size();ligacao++)
+    for(int local = 0; local < g.getVertexSet().size(); local++){
+        for(int ligacao = 0; ligacao < g.getVertexSet().at(local)->getAdj().size();ligacao++)
             gv->addEdge(edgeID++,g.getVertexSet().at(local)->getInfo()->getId(),g.getVertexSet().at(local)->getAdj().at(ligacao)->getDest()->getInfo()->getId(),EdgeType::DIRECTED);
     }
 
@@ -144,14 +136,4 @@ int exec(Graph<Local*> &g){
     #endif
 
     return 0;
-}
-
-int main(int argc, char *argv[]) {
-    init(g);
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.setWindowTitle("Planeamento de Itinerários Multimodais");
-    w.show();
-
-    return a.exec();
 }

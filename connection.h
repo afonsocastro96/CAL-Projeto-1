@@ -1,36 +1,40 @@
-﻿    #ifndef _CONNECTION_
-    #define _CONNECTION_
+﻿#ifndef _CONNECTION_
+#define _CONNECTION_
 
-    #include <cstdio>
-    #include <cstdlib>
-    #include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-    #ifdef __linux__
+#ifdef __linux__
     #include <arpa/inet.h>
     #include <sys/socket.h>
     #include <sys/types.h>
     #include <netdb.h>
     #else
-    #include <winsock2.h>
-    #endif
 
-    #include <string>
-    #include <iostream>
+#include <winsock2.h>
 
-    using namespace std;
+#endif
 
-    class Connection {
-     public:
-      Connection(short port);
+#include <string>
+#include <iostream>
 
-      bool sendMsg(string msg);
-      string readLine();
-     private:
-    #ifdef __linux__
+using namespace std;
+
+class Connection {
+public:
+    Connection(short port);
+
+    bool sendMsg(string msg);
+
+    string readLine();
+
+private:
+#ifdef __linux__
       int sock;
     #else
-      SOCKET sock;
-    #endif
-    };
+    SOCKET sock;
+#endif
+};
 
-    #endif
+#endif
