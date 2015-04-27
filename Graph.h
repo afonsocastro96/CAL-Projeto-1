@@ -415,9 +415,6 @@ void Graph<T>::dijkstraShortestPath(Vertex<T> &source, Vertex<T> &dest, Preferen
 
 template<class T>
 string Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv) {
-    if (dest.path == NULL)
-        return "Cenas";
-
     int id = 0;
 
     stringstream instruction;
@@ -427,6 +424,10 @@ string Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, G
 
     gv->addEdge(99999,dest.path->getInfo()->getId(),dest.getInfo()->getId(),EdgeType::DIRECTED);
     gv->setEdgeColor(99999,"red");
+
+    instruction << "Continue até ao destino: " << dest.getInfo()->getNome() << "\n";
+    instructions.push_back(instruction.str());
+    instruction.str("");
 
     Vertex<T> currentPath = *dest.path;
 
@@ -446,7 +447,7 @@ string Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, G
                     break;
                 }
                 instruction << "até ";
-                if(currentPath.path->getAdj()[i]->getDest()->getInfo()->getId() < 2363) //Paragem de autocarro
+                if(currentPath.path->getAdj()[i]->getTransport() == BUS) //Paragem de autocarro
                     instruction << "à paragem de autocarro " << currentPath.path->getAdj()[i]->getDest()->getInfo()->getNome();
                 else
                     instruction << "à estação de metro " << currentPath.path->getAdj()[i]->getDest()->getInfo()->getNome();
@@ -465,8 +466,10 @@ string Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, G
 
     instruction << "Comece em " << source.getInfo()->getNome() << ".\n";
 
+    if(instructions.size() == 0)
+        instructions.push_back(" ");
 
-    for(int instr = instructions.size()-1;instr != 0; instr--){
+    for(int instr = instructions.size()-1;instr >= 0; instr--){
         instruction << instructions[instr];
     }
 
