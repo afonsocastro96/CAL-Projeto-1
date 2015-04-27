@@ -137,9 +137,6 @@ Edge<T>::Edge(Vertex<T> *d, Vertex<T> *o, double price, double distance, Transpo
 template<class T>
 class Graph {
     vector<Vertex<T> *> vertexSet;
-
-    void dfs(Vertex<T> *v, vector<T> &res) const;
-
 public:
     int addVertex(T &in, long double x, long double y);
 
@@ -148,14 +145,6 @@ public:
     bool removeVertex(const T &in);
 
     bool removeEdge(const T &sourc, const T &dest);
-
-    vector<T> dfs() const;
-
-    vector<T> bfs(Vertex<T> *v) const;
-
-    int maxNewChildren(Vertex<T> *v, T &inf) const;
-
-    Vertex<T>* getVertex(const T &v) const;
 
     vector<Vertex<T> *> getVertexSet() { return vertexSet; }
 
@@ -172,13 +161,6 @@ public:
 template<class T>
 int Graph<T>::getNumVertex() const {
     return vertexSet.size();
-}
-
-template <class T>
-Vertex<T>* Graph<T>::getVertex(const T &v) const {
-    for(unsigned int i = 0; i < vertexSet.size(); i++)
-        if (vertexSet[i]->info == v) return vertexSet[i];
-    return NULL;
 }
 
 template<class T>
@@ -347,8 +329,8 @@ void Graph<T>::dijkstraShortestPath(Vertex<T> &source, Vertex<T> &dest, Preferen
     }
 
     Transport lastTransport;
+    double xGeoSource, yGeoSource, xGeoDest, yGeoDest, costEdge;
 
-    double xGeoSource, yGeoSource, xGeoDest, yGeoDest, costEdge, distanceToDest;
 
     xGeoDest = (((dest.x - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
     xGeoDest *= LONGITUDE_UNIT;
@@ -379,19 +361,17 @@ void Graph<T>::dijkstraShortestPath(Vertex<T> &source, Vertex<T> &dest, Preferen
         for (unsigned int i = 0; i < v->adj.size(); i++) {
             w = v->adj[i]->dest;
 
-            distanceToDest = sqrt(pow(xGeoDest - xGeoSource, 2) + pow(yGeoDest - yGeoSource, 2));
-
             if (preferencia == PRICE) {
-                costEdge = distanceToDest * v->adj[i]->price;
+                costEdge = v->adj[i]->price;
             } else if (preferencia == DISTANCE) {
-                costEdge = distanceToDest * v->adj[i]->distance;
+                costEdge = v->adj[i]->distance;
             } else if (preferencia == TIME) {
                 if (v->adj[i]->transport == METRO) {
-                    costEdge = distanceToDest * v->adj[i]->distance / 50;
+                    costEdge = v->adj[i]->distance / 50;
                 } else if (v->adj[i]->transport == BUS) {
-                    costEdge = distanceToDest * v->adj[i]->distance / 20;
+                    costEdge = v->adj[i]->distance / 20;
                 } else {
-                    costEdge = distanceToDest * v->adj[i]->distance / 5;
+                    costEdge = v->adj[i]->distance / 5;
                 }
             }
 

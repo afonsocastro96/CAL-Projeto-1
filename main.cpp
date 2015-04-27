@@ -111,8 +111,6 @@ void init(Graph<Local*> &g){
 
 
 string exec(Graph<Local*> &g){
-    int edgeID = 0;
-
     if (algorithm == 0)
         g.aStarShortestPath(*g.getVertexSet().at(idPartida),*g.getVertexSet().at(idChegada), preference);
     else if (algorithm == 1)
