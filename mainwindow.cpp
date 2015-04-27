@@ -32,8 +32,8 @@ void MainWindow::on_options_clicked()
 
 void MainWindow::on_calculateDistance_clicked()
 {
-    exec(g);
-    OutputCalcs outputcalcs(this);
+    string percurso = exec(g);
+    OutputCalcs outputcalcs(this,percurso);
     outputcalcs.setModal(false);
     outputcalcs.exec();
 }

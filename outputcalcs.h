@@ -2,6 +2,8 @@
 #define OUTPUTCALCS_H
 
 #include <QDialog>
+#include <string>
+#include <iostream>
 
 namespace Ui {
 class OutputCalcs;
@@ -12,7 +14,7 @@ class OutputCalcs : public QDialog
     Q_OBJECT
 
 public:
-    explicit OutputCalcs(QWidget *parent = 0);
+    explicit OutputCalcs(QWidget *parent = 0, std::string percurso = "");
     ~OutputCalcs();
 
 private slots:

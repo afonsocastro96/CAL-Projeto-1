@@ -35,7 +35,6 @@ HEADERS  += mainwindow.h \
     parseLinhasMetro.h \
     parseLinhasAutocarro.h \
     Local.h \
-    LoadFile.h \
     optionsdialog.h \
     init.h \
     updatelines.h \

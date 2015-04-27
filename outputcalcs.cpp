@@ -1,15 +1,16 @@
 #include "outputcalcs.h"
 #include "ui_outputcalcs.h"
+#include <string>
 
 #include <QMessageBox>
 
-OutputCalcs::OutputCalcs(QWidget *parent) :
+OutputCalcs::OutputCalcs(QWidget *parent, std::string percurso) :
     QDialog(parent),
     ui(new Ui::OutputCalcs)
 {
     this->setWindowTitle(QString("Itinerário"));
     ui->setupUi(this);
-    ui->textBrowser->append(QString("Siga a pé até à estação de metro Marquês.\nSiga até à estação de metro IPO.\nSiga a pé até à estação de autocarro Hospital São João.\nSiga até à estação de autocarro Faculdade de Engenharia."));
+    ui->textBrowser->append(QString(percurso.c_str()));
 }
 
 OutputCalcs::~OutputCalcs()

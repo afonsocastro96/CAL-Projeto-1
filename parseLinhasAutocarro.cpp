@@ -161,7 +161,7 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
     int index;
     double xGeoSource, yGeoSource, xGeoDest, yGeoDest, distance;
 
-    for(int linha = 0; linha < locais.size();linha++){
+    for(unsigned int linha = 0; linha < locais.size();linha++){
 
         if(locais[linha].size() == 0)
             continue;
@@ -180,7 +180,7 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
 
         /* Inserir os locais seguintes da linha. O primeiro tem de estar separado dos restantes por causa das ligacoes
          * entre os vertices. */
-        for(int local = 1; local < locais[linha].size();local++){
+        for(unsigned int local = 1; local < locais[linha].size();local++){
             index = paragemExiste(g, locais[linha][local]);
 
 
@@ -207,7 +207,7 @@ void inserirParagensNoGrafo(Graph<Local *> &g, vector<vector<Local *> > locais){
             }
             else {
                 bool alreadyHaveEdge = false;
-                for(int k = 0; k < g.getVertexSet().at(lastBusLocal)->getAdj().size(); k++) {
+                for(unsigned int k = 0; k < g.getVertexSet().at(lastBusLocal)->getAdj().size(); k++) {
                     if (g.getVertexSet().at(lastBusLocal)->getAdj().at(k)->getDest()->getInfo() == g.getVertexSet().at(index)->getInfo()) {
                         alreadyHaveEdge = true;
                         break;

@@ -163,7 +163,10 @@ public:
 
     void aStarShortestPath(Vertex<T> &source, Vertex<T> &dest, Preference preferencia);
 
-    void paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv);
+    void dijkstraShortestPath(Vertex<T> &source, Vertex<T> &dest, Preference preferencia);
+
+
+    string paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv);
 };
 
 template<class T>
@@ -335,31 +338,121 @@ void Graph<T>::aStarShortestPath(Vertex<T> &source, Vertex<T> &dest, Preference 
     }
 
 }
+template <class T>
+void Graph<T>::dijkstraShortestPath(Vertex<T> &source, Vertex<T> &dest, Preference preferencia){
+    for (unsigned int i = 0; i < vertexSet.size(); i++) {
+        vertexSet[i]->path = NULL;
+        vertexSet[i]->cost = INT_INFINITY;
+        vertexSet[i]->processing = false;
+    }
+
+    Transport lastTransport;
+
+    double xGeoSource, yGeoSource, xGeoDest, yGeoDest, costEdge, distanceToDest;
+
+    xGeoDest = (((dest.x - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+    xGeoDest *= LONGITUDE_UNIT;
+    yGeoDest = (((dest.y - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+    yGeoDest *= LATITUDE_UNIT;
+
+
+    Vertex<T> *v = &source;
+    v->cost = 0;
+
+    vector<Vertex<T> *> pq;
+    pq.push_back(v);
+
+    make_heap(pq.begin(), pq.end());
+
+    while (!pq.empty()) {
+
+        v = pq.front();
+        pop_heap(pq.begin(), pq.end());
+        pq.pop_back();
+
+        xGeoSource = (((v->x - MARGIN) * DELTAH) / HSIZE) + XINICIAL;
+        xGeoSource *= LONGITUDE_UNIT;
+        yGeoSource = (((v->y - MARGIN) * DELTAV) / VSIZE) + YINICIAL;
+        yGeoSource *= LATITUDE_UNIT;
+        Vertex<T> *w;
+
+        for (unsigned int i = 0; i < v->adj.size(); i++) {
+            w = v->adj[i]->dest;
+
+            distanceToDest = sqrt(pow(xGeoDest - xGeoSource, 2) + pow(yGeoDest - yGeoSource, 2));
+
+            if (preferencia == PRICE) {
+                costEdge = distanceToDest * v->adj[i]->price;
+            } else if (preferencia == DISTANCE) {
+                costEdge = distanceToDest * v->adj[i]->distance;
+            } else if (preferencia == TIME) {
+                if (v->adj[i]->transport == METRO) {
+                    costEdge = distanceToDest * v->adj[i]->distance / 50;
+                } else if (v->adj[i]->transport == BUS) {
+                    costEdge = distanceToDest * v->adj[i]->distance / 20;
+                } else {
+                    costEdge = distanceToDest * v->adj[i]->distance / 5;
+                }
+            }
+
+            if (v->cost + costEdge < w->cost) {
+                w->cost = v->cost + costEdge;
+                w->path = v;
+
+                //se ja estiver na lista, apenas a actualiza
+                if (!w->processing) {
+                    w->processing = true;
+                    lastTransport = v->adj[i]->transport;
+                    pq.push_back(w);
+                }
+
+                make_heap(pq.begin(), pq.end(), vertex_greater_than<T>());
+            }
+        }
+    }
+}
+
 
 template<class T>
-void Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv) {
+string Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, GraphViewer* gv) {
     if (dest.path == NULL)
-        return;
+        return "Cenas";
 
     int id = 0;
 
-    stringstream instructions;
+    stringstream instruction;
+    vector<string> instructions;
     gv->setVertexColor(source.getInfo()->getId(),"red");
     gv->setVertexColor(dest.getInfo()->getId(),"blue");
 
     gv->addEdge(99999,dest.path->getInfo()->getId(),dest.getInfo()->getId(),EdgeType::DIRECTED);
     gv->setEdgeColor(99999,"red");
 
-
-
     Vertex<T> currentPath = *dest.path;
-    if (source.getInfo() == dest.path->getInfo())
-        cout << "É direto!! " << endl;
 
     while (source.getInfo() != currentPath.getInfo()) {
         for(unsigned int i = 0; i < currentPath.path->getAdj().size(); i++) {
             if (currentPath.path->getAdj()[i]->getDest()->getInfo() == currentPath.getInfo()){
-                instructions << currentPath.path->getAdj()[i]->getTransport() << "\n";
+                instruction << "Siga ";
+                switch(currentPath.path->getAdj()[i]->getTransport()){
+                case WALK:
+                    instruction << "a pé ";
+                    break;
+                case BUS:
+                    instruction << "de autocarro ";
+                    break;
+                case METRO:
+                    instruction << "de metro ";
+                    break;
+                }
+                instruction << "até ";
+                if(currentPath.path->getAdj()[i]->getDest()->getInfo()->getId() < 2363) //Paragem de autocarro
+                    instruction << "à paragem de autocarro " << currentPath.path->getAdj()[i]->getDest()->getInfo()->getNome();
+                else
+                    instruction << "à estação de metro " << currentPath.path->getAdj()[i]->getDest()->getInfo()->getNome();
+                instruction << ".\n";
+                instructions.push_back(instruction.str());
+                instruction.str("");
             }
         }
 
@@ -370,7 +463,14 @@ void Graph<T>::paintBestPath(const Vertex<T> &source, const Vertex<T> &dest, Gra
 
     }
 
-    cout << instructions.str() << endl;
+    instruction << "Comece em " << source.getInfo()->getNome() << ".\n";
+
+
+    for(int instr = instructions.size()-1;instr != 0; instr--){
+        instruction << instructions[instr];
+    }
+
+    return instruction.str();
 }
 
 

@@ -11,7 +11,7 @@
 #include "parseLinhasMetro.h"
 
 bool estacaoExiste(vector<Local *> locals, Local *local){
-    for(int i = 0; i < locals.size(); i++){
+    for(unsigned int i = 0; i < locals.size(); i++){
         if(locals[i]->getNome() == local->getNome()){
             return true;
         }
@@ -87,9 +87,6 @@ vector<Local *> extrairEstacoesMetro(){
             Local* local = new Local(x, y, name);
             if(!(x < 0 || y < 0 || x > HSIZE || y > VSIZE) && !estacaoExiste(locais, local)) {
                 locais.push_back(local);
-                cout << local->getNome() << endl;
-                cout << local->getX() << endl;
-                cout << local->getY() << endl << endl;
             }
             name = "";
         } else {
@@ -119,7 +116,7 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
         getline(i_ficheiro,paragemMetro);
         /* Coloca a primeira paragem da linha no grafo. E necessario separar a primeira das seguintes para poder colocar
          * as arestas entre as paragens. */
-        for(int paragem = 0; paragem < locais.size(); paragem++){
+        for(unsigned int paragem = 0; paragem < locais.size(); paragem++){
             if(paragemMetro == locais[paragem]->getNome()){
                 previousIndex = g.addVertex(locais[paragem], locais[paragem]->getX(), locais[paragem]->getY());
                 if(previousIndex == g.getNumVertex() - 1)
@@ -133,7 +130,7 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
         /* Coloca as paragens seguintes */
         while(!i_ficheiro.eof()){
             getline(i_ficheiro,paragemMetro);
-            for(int paragem = 0; paragem < locais.size(); paragem++){
+            for(unsigned int paragem = 0; paragem < locais.size(); paragem++){
                 if(paragemMetro == locais[paragem]->getNome()){
                     index = g.addVertex(locais[paragem], locais[paragem]->getX(), locais[paragem]->getY());
                     if(index != -1) {
@@ -147,7 +144,7 @@ void inserirEstacoesNoGrafo(Graph<Local *> &g, vector<Local *> locais){
             }
 
             bool alreadyHaveEdge = false;
-            for(int k = 0; k < g.getVertexSet().at(previousIndex)->getAdj().size(); k++) {
+            for(unsigned int k = 0; k < g.getVertexSet().at(previousIndex)->getAdj().size(); k++) {
                 if (g.getVertexSet().at(previousIndex)->getAdj().at(k)->getDest()->getInfo() == g.getVertexSet().at(index)->getInfo()) {
                     alreadyHaveEdge = true;
                     break;

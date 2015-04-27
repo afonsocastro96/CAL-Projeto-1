@@ -25,7 +25,7 @@ void loadNodes(Graph<Local*> &g);
 void loadEdges(Graph<Local*> &g);
 void loadFiles(Graph<Local*> &g);
 void createFiles();
-int exec(Graph<Local*> &g);
+string exec(Graph<Local*> &g);
 void init(Graph<Local*> &g);
 void callUpdateBusScript();
 void callUpdateSubwayScript();
@@ -34,6 +34,10 @@ void showFullMap();
 extern Graph<Local*> g;
 extern int resX;
 extern int resY;
+extern Preference preference;
+extern int algorithm;
+extern int idPartida;
+extern int idChegada;
 
 #endif // INIT_H
 

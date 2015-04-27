@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>390</height>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -144,9 +144,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="radioButton_3">
+    <widget class="QRadioButton" name="radioButton_5">
      <property name="text">
-      <string>Distância</string>
+      <string>Tempo</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -157,9 +157,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="radioButton_5">
+    <widget class="QRadioButton" name="radioButton_3">
      <property name="text">
-      <string>Número de Transbordos</string>
+      <string>Distância</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">buttonGroup</string>
@@ -170,16 +173,6 @@
     <widget class="QRadioButton" name="radioButton_4">
      <property name="text">
       <string>Preço</string>
-     </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
-     </attribute>
-    </widget>
-   </item>
-   <item>
-    <widget class="QRadioButton" name="radioButton_6">
-     <property name="text">
-      <string>Tempo</string>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">buttonGroup</string>

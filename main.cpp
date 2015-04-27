@@ -4,8 +4,13 @@ using namespace std;
 
 Graph<Local*> g;
 
+
 int resX = 1024;
 int resY = 768;
+Preference preference = TIME;
+int algorithm = 0;
+int idPartida = 0;
+int idChegada = 1;
 
 void callUpdateBusScript(){
 #ifdef __linux__
@@ -121,24 +126,25 @@ void init(Graph<Local*> &g){
 }
 
 
-int exec(Graph<Local*> &g){
+string exec(Graph<Local*> &g){
     int edgeID = 0;
 
-    g.aStarShortestPath(*g.getVertexSet().at(2385),*g.getVertexSet().at(1001), DISTANCE);
+    if (algorithm == 0)
+        g.aStarShortestPath(*g.getVertexSet().at(idPartida),*g.getVertexSet().at(idChegada), preference);
+    else if (algorithm == 1)
+        g.dijkstraShortestPath(*g.getVertexSet().at(idPartida),*g.getVertexSet().at(idChegada), preference);
 
     /* Criar os locais */
     GraphViewer* gv = new GraphViewer(HSIZE, VSIZE, false);
-    gv->setBackground("/home/afonso/Imagens/DiHnkJ2.jpg");
     gv->createWindow(resX, resY);
 
 
     for(unsigned int local = 0; local < g.getVertexSet().size(); local++){
         gv->addNode(g.getVertexSet().at(local)->getInfo()->getId(),g.getVertexSet().at(local)->getInfo()->getX(),g.getVertexSet().at(local)->getInfo()->getY());
+        gv->setVertexLabel(g.getVertexSet().at(local)->getInfo()->getId(),g.getVertexSet().at(local)->getInfo()->getNome());
     }
 
-    g.paintBestPath(*g.getVertexSet().at(2385),*g.getVertexSet().at(1001),gv);
-
-    cout << "Acabei!" << endl;
+    string percurso = g.paintBestPath(*g.getVertexSet().at(idPartida),*g.getVertexSet().at(idChegada),gv);
 
     /* Update graph */
     gv->rearrange();
@@ -148,7 +154,7 @@ int exec(Graph<Local*> &g){
         while(true) {}
     #endif
 
-    return 0;
+    return percurso;
 }
 
 void showFullMap(){
@@ -156,7 +162,6 @@ void showFullMap(){
 
     /* Criar os locais */
     GraphViewer* gv = new GraphViewer(HSIZE, VSIZE, false);
-    gv->setBackground("/home/afonso/Imagens/DiHnkJ2.jpg");
     gv->createWindow(resX, resY);
 
 
@@ -171,9 +176,6 @@ void showFullMap(){
                 gv->addEdge(edgeID++,g.getVertexSet().at(local)->getInfo()->getId(),g.getVertexSet().at(local)->getAdj().at(ligacao)->getDest()->getInfo()->getId(),EdgeType::DIRECTED);
        }
     }
-
-
-    cout << "Acabei!" << endl;
 
     /* Update graph */
     gv->rearrange();
