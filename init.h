@@ -27,8 +27,6 @@ void loadFiles(Graph<Local*> &g);
 void createFiles();
 string exec(Graph<Local*> &g);
 void init(Graph<Local*> &g);
-void callUpdateBusScript();
-void callUpdateSubwayScript();
 void showFullMap();
 
 extern Graph<Local*> g;

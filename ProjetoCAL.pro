@@ -22,7 +22,6 @@ SOURCES += main.cpp\
     parseLinhasMetro.cpp \
     parseLinhasAutocarro.cpp \
     optionsdialog.cpp \
-    updatelines.cpp \
     outputcalcs.cpp
 
 HEADERS  += mainwindow.h \
@@ -37,7 +36,6 @@ HEADERS  += mainwindow.h \
     Local.h \
     optionsdialog.h \
     init.h \
-    updatelines.h \
     outputcalcs.h
 
 FORMS    += mainwindow.ui \

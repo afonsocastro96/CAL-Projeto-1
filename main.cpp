@@ -12,22 +12,6 @@ int algorithm = 0;
 int idPartida = 0;
 int idChegada = 1;
 
-void callUpdateBusScript(){
-#ifdef __linux__
-    string command = "sh /home/afonso/Documentos/CAL/Projeto - Itinerarios Multimodais/ProjetoItinerariosMultiModais/linhas/autocarro/download.sh";
-    system(command.c_str());
-#else
-#endif
-}
-
-void callUpdateSubwayScript(){
-#ifdef __linux__
-    string command = "sh /home/afonso/Documentos/CAL/Projeto - Itinerarios Multimodais/ProjetoItinerariosMultiModais/linhas/metro/download.sh";
-    system(command.c_str());
-#else
-#endif
-}
-
 void loadNodes(Graph<Local*> &g){
     string idStr;
     string nome;
